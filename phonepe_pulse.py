@@ -5,11 +5,17 @@ import streamlit as st
 import mysql.connector
 import plotly.express as px
 
+
+st.title("Phonepe Pulse Data Visualization and Exploration")
+
 path = "C:/GitHub/pulse/data/top/user/country/india/state"
 
 dict1 = {'State': [], 'Year': [], 'Quarter': [], 'Districts': [], 'Users': []}
 
-@st.cache
+tab1, tab2, tab3,tab4 = st.tabs(["Extract Data", "Transform Data", "Insert Data", "Visualize Data"])
+
+
+
 def load_data(path):
     for state in os.listdir(path):
         state_dir = os.path.join(path, state)
@@ -29,14 +35,14 @@ def load_data(path):
                         dict1['Quarter'].append(quarter)
                         dict1['Districts'].append(district_name)
                         dict1['Users'].append(district_users)
-
-load_data(path)
+    st.dataframe(dict1)
+with tab1:
+    load_data(path)
 
 df = pd.DataFrame(dict1)
 
 df.to_csv('users_data.csv', index=False)
 
-@st.cache
 def explore_data():
 
     df.dropna(inplace=True)
@@ -55,9 +61,10 @@ def explore_data():
 
     pivoted.to_csv('pivoted_data.csv', index=False)
 
-explore_data()
+with tab2:
+    explore_data()
 
-@st.cache
+
 def sql_con():
 
     pivoted = pd.read_csv('pivoted_data.csv')
@@ -80,12 +87,17 @@ def sql_con():
         values = (state, year_2018, year_2019, year_2020, year_2021)
         cursor.execute(sql, values)
 
+    st.write("Data Inserted Successfully")
+
     conn.commit()
 
     conn.close()
 
-sql_con()
-@st.cache
+with tab3:
+    sql_con()
+
+
+@st.cache_data
 def visualization():
     with open('C:/GitHub/pulse/india_state_geo.json') as f:
         data = json.load(f)
@@ -97,11 +109,24 @@ def visualization():
     fig.update_layout(margin={'l': 0, 'r': 0, 't': 0, 'b': 0})
     st.plotly_chart(fig)
 
+    #year = st.selectbox('Select a year', df['Year'].unique())
+
+    #filtered_data = df[df['Year'] == year]
+
+    #fig = px.bar(filtered_data, x='State', y='Users', color='Districts', title=f'Number of Users by State for {year}')
+    #st.plotly_chart(fig)
+
+with tab4:
+    visualization()
+
+
+def visualization1():
     year = st.selectbox('Select a year', df['Year'].unique())
 
     filtered_data = df[df['Year'] == year]
 
     fig = px.bar(filtered_data, x='State', y='Users', color='Districts', title=f'Number of Users by State for {year}')
+
     st.plotly_chart(fig)
 
-visualization()
+visualization1()
