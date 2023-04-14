@@ -4,7 +4,7 @@ import pandas as pd
 import streamlit as st
 import mysql.connector
 import plotly.express as px
-
+import geopandas as gpd
 
 st.title("Phonepe Pulse Data Visualization and Exploration")
 
@@ -12,7 +12,7 @@ path = "C:/GitHub/pulse/data/top/user/country/india/state"
 
 dict1 = {'State': [], 'Year': [], 'Quarter': [], 'Districts': [], 'Users': []}
 
-tab1, tab2, tab3,tab4 = st.tabs(["Extract Data", "Transform Data", "Insert Data", "Visualize Data"])
+tab1, tab2, tab3, tab4, tab5 = st.tabs(["Extract Data", "Transform Data", "Insert Data", "Visualize Data in Map", "Visualize Bar Chart"])
 
 
 
@@ -61,13 +61,15 @@ def explore_data():
 
     pivoted.to_csv('pivoted_data.csv', index=False)
 
+    return pivoted
+
 with tab2:
     explore_data()
 
 
 def sql_con():
 
-    pivoted = pd.read_csv('pivoted_data.csv')
+    pivoted = explore_data()
 
     conn = mysql.connector.connect(host="database-phonepe-pulse.cbgdu1nd11gm.ap-south-1.rds.amazonaws.com",
                                    user="admin",
@@ -87,14 +89,31 @@ def sql_con():
         values = (state, year_2018, year_2019, year_2020, year_2021)
         cursor.execute(sql, values)
 
+    query = """
+           SELECT * from users
+       """
+    cursor.execute(query)
+
+    data = cursor.fetchall()
+
+    # create a pandas dataframe from the fetched data
+    df = pd.DataFrame(data, columns=['ID','State', 'year_2018', 'year_2019', 'year_2020', 'year_2021'])
+
     st.write("Data Inserted Successfully")
 
     conn.commit()
 
     conn.close()
 
+    st.write(df)
+
+    return df
 with tab3:
     sql_con()
+
+
+
+
 
 
 @st.cache_data
@@ -102,31 +121,29 @@ def visualization():
     with open('C:/GitHub/pulse/india_state_geo.json') as f:
         data = json.load(f)
 
+
     fig = px.choropleth_mapbox(df, geojson=data, locations='State', color='Users',
                                color_continuous_scale='Viridis', range_color=(0, df['Users'].max()),
-                               mapbox_style='carto-positron', zoom=3, center={'lat': 20.5937, 'lon': 78.9629},
-                               opacity=0.5, labels={'Users': 'Number of Users'})
+                               mapbox_style='open-street-map', zoom=3, center={'lat': 20.5937, 'lon': 78.9629},
+                               opacity=0.5, labels={'Users': 'Number of Users'}, featureidkey='properties.ID_1')
     fig.update_layout(margin={'l': 0, 'r': 0, 't': 0, 'b': 0})
+
     st.plotly_chart(fig)
 
-    #year = st.selectbox('Select a year', df['Year'].unique())
-
-    #filtered_data = df[df['Year'] == year]
-
-    #fig = px.bar(filtered_data, x='State', y='Users', color='Districts', title=f'Number of Users by State for {year}')
-    #st.plotly_chart(fig)
 
 with tab4:
     visualization()
 
 
 def visualization1():
-    year = st.selectbox('Select a year', df['Year'].unique())
+    df = sql_con()
 
-    filtered_data = df[df['Year'] == year]
-
-    fig = px.bar(filtered_data, x='State', y='Users', color='Districts', title=f'Number of Users by State for {year}')
+    fig = px.bar(df, x="State", y=["year_2018", "year_2019", "year_2020", "year_2021"],
+                 barmode='group', title="User Growth by State")
+    fig.update_layout(xaxis_title="State", yaxis_title="Number of Users")
 
     st.plotly_chart(fig)
 
-visualization1()
+
+with tab5:
+    visualization1()
