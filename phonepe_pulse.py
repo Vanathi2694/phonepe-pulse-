@@ -179,8 +179,8 @@ def visualization():
                     color_continuous_scale='Viridis'
                 )
             fig.update_geos(fitbounds="locations")
-
             st.plotly_chart(fig)
+            st.balloons()
         elif option1 == '2019':
             df = sql_con()
             fig = px.choropleth(
@@ -193,8 +193,8 @@ def visualization():
                     color_continuous_scale='Viridis'
                 )
             fig.update_geos(fitbounds="locations")
-
             st.plotly_chart(fig)
+            st.balloons()
         elif option1 == '2020':
             df = sql_con()
             fig = px.choropleth(
@@ -207,8 +207,8 @@ def visualization():
                     color_continuous_scale='Viridis'
                 )
             fig.update_geos(fitbounds="locations")
-
             st.plotly_chart(fig)
+            st.balloons()
         elif option1 == '2021':
             df = sql_con()
             fig = px.choropleth(
@@ -221,8 +221,8 @@ def visualization():
                     color_continuous_scale='Viridis'
                 )
             fig.update_geos(fitbounds="locations")
-
             st.plotly_chart(fig)
+            st.balloons()
         else:
             st.write("Select any year")
     elif option == 'Visualize Transaction':
@@ -238,8 +238,8 @@ def visualization():
                 color_continuous_scale='Viridis'
             )
         fig.update_geos(fitbounds="locations")
-
         st.plotly_chart(fig)
+        
         st.write("Total Count")
         fig = px.choropleth(
             df1,
@@ -253,6 +253,7 @@ def visualization():
         fig.update_geos(fitbounds="locations")
 
         st.plotly_chart(fig)
+        st.balloons()
         # fig = px.choropleth_mapbox(df, geojson=data, locations='State', color='Users',
         # color_continuous_scale='Viridis', range_color=(0, df['Users'].max()),
         # mapbox_style='open-street-map', zoom=3, center={'lat': 20.5937, 'lon': 78.9629},
@@ -267,8 +268,8 @@ def visualization1():
     fig = px.bar(df, x="State", y=["year_2018", "year_2019", "year_2020", "year_2021"],
                      barmode='group', title="User Growth by State")
     fig.update_layout(xaxis_title="State", yaxis_title="Number of Users")
-
     st.plotly_chart(fig)
+    st.balloons()
 
 
 with tab1:
@@ -478,11 +479,13 @@ def visualization():
         df_melted = df1.melt(id_vars='State', var_name='year', value_name='usage_count')
         fig = px.line(df_melted, x='year', y='usage_count', color='State')
         st.plotly_chart(fig)
+        st.balloons()
     elif option =='Transaction':
         df = sqlcon1()
         grouped = df.groupby(['State', 'year']).sum().reset_index()
         fig = px.pie(grouped, values='total_count', names='State', hole=.3)
         st.plotly_chart(fig)
+        st.balloons()
 
 with tab1:
     option2 = st.selectbox("Select any one", ('Extract Users', 'Extract Transaction'))
@@ -676,6 +679,7 @@ def visualization():
         fig.update_layout(xaxis_title='Year', yaxis_title='Percentage of Users', legend_title='Brand',
                           hovermode='closest')
         st.plotly_chart(fig)
+        st.balloons()
 
     elif option == 'Transaction':
         df1 = sqlcon1()
@@ -684,6 +688,7 @@ def visualization():
         st.plotly_chart(fig)
         fig = px.scatter(df1, x='year', y='amount', color='type_of_payment', title='Total Amount of Payments by Type')
         st.plotly_chart(fig)
+        st.balloons()
 
 
 with tab1:
