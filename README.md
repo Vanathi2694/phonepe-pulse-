@@ -1,23 +1,23 @@
-TITILE: 
+**TITILE:**
 
 
-  Phonepe Pulse Data Visualization and Exploration:A User-Friendly Tool Using Streamlit and Plotly
+    Phonepe Pulse Data Visualization and Exploration:A User-Friendly Tool Using Streamlit and Plotly
 
 
-Technologies:
+**Technologies:**
 
 
-  Github Cloning, Python, Pandas, MySQL,mysql-connector-python, Streamlit, and Plotly.
+    Github Cloning, Python, Pandas, MySQL,mysql-connector-python, Streamlit, and Plotly.
   
-Domain:
+**Domain:**
 
 
-  Fintech
+   Fintech
     
-Result:
+**Result:**
 
 
-  The result of this project will be a live geo visualization dashboard that displays
+    The result of this project will be a live geo visualization dashboard that displays
 information and insights from the Phonepe pulse Github repository in an interactive
 and visually appealing manner. The dashboard will have at least 10 different
 dropdown options for users to select different facts and figures to display. The data
@@ -32,16 +32,19 @@ for extracting, transforming, and visualizing data from the Phonepe pulse Github
 repository.
 
 
-GUI used in Streamlit:
+**GUI used in Streamlit:**
 
 
   *3 Pages for Top,Aggregated,Map
+  
   *4 & 5 Tabs for Extract Data,Transform Data,Load Data into Database,Visualization(ETL)
+  
   *12+ Dropdown selectbox for selecting Transaction or User
+  
   *Balloons after every visualization
   
 
-Process:
+**Process:**
 
 
   *Select the page in streamlit which you want to perform ETL and visualize
@@ -49,7 +52,7 @@ Process:
   *In each tab you have dropdown to select for transaction or user
 
 
-Approach:
+**Approach:**
 
 
   1.Data extraction: Clone the Github using scripting to fetch the data from the Phonepe pulse Github repository and store it in a suitable format such as CSV
