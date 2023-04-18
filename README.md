@@ -22,6 +22,7 @@
 
 **GUI used in Streamlit:**
 
+    *Theme for streamlit
 
     *3 Pages for Top,Aggregated,Map
   
