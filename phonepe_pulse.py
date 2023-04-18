@@ -315,15 +315,12 @@ import pandas as pd
 import streamlit as st
 import mysql.connector
 import plotly.express as px
-import geopandas as gpd
 import numpy as np
-import matplotlib.pyplot as plt
 
 
 st.title("Phonepe Pulse Data Visualization and Exploration")
 path = "C:/GitHub/pulse/data/map/transaction/hover/country/india/state"
 dict1 = {'State': [], 'Year': [], 'Quarter': [], 'Districts': [], 'Count': [], 'Amount': []}
-
 tab1, tab2, tab3, tab4 = st.tabs(["Extract Data", "Transform Data", "Insert Data", "Visualization"])
 
 
@@ -402,7 +399,6 @@ def transform():
     return df_grouped
 
 
-
 def transform1():
     df = pd.read_csv('map_user_data.csv')
     df.dropna(inplace=True)
@@ -444,6 +440,7 @@ def sqlcon1():
     conn.close()
     return df
 
+
 def sql_con():
 
     pivoted = transform1()
@@ -476,32 +473,46 @@ def sql_con():
 
 
 def visualization():
-    df = sqlcon1()
-    grouped = df.groupby(['State', 'year']).sum().reset_index()
-    fig = px.pie(grouped, values='total_count', names='State', hole=.3)
-    st.plotly_chart(fig)
+    if option == 'Users':
+        df1 = sql_con()
+        df_melted = df1.melt(id_vars='State', var_name='year', value_name='usage_count')
+        fig = px.line(df_melted, x='year', y='usage_count', color='State')
+        st.plotly_chart(fig)
+    elif option =='Transaction':
+        df = sqlcon1()
+        grouped = df.groupby(['State', 'year']).sum().reset_index()
+        fig = px.pie(grouped, values='total_count', names='State', hole=.3)
+        st.plotly_chart(fig)
 
 with tab1:
-    st.write("Map Transaction")
-    extract(path)
-    st.write("Map User")
-    extract1(path1)
-
+    option2 = st.selectbox("Select any one", ('Extract Users', 'Extract Transaction'))
+    if option2 == 'Extract Transaction':
+        st.write("Map Transaction")
+        extract(path)
+    elif option2 == 'Extract Users':
+        st.write("Map User")
+        extract1(path1)
 
 with tab2:
-    st.write("Map Transaction")
-    transform()
-    st.write("Map User")
-    transform1()
-
+    option3 = st.selectbox("Select any one", ('Transform Users', 'Transform Transaction'))
+    if option3 == 'Transform Transaction':
+        st.write("Map Transaction")
+        transform()
+    elif option3 == 'Transform Users':
+        st.write("Map User")
+        transform1()
 
 with tab3:
-    st.write("Map Transaction")
-    sql_con()
-    st.write("Map User")
-    sqlcon1()
+    option4 = st.selectbox("Select any one", ('Insert Users', 'Insert Transaction'))
+    if option4 == 'Insert Transaction':
+        st.write("Map Transaction")
+        sql_con()
+    elif option4 == 'Insert Users':
+        st.write("Map User")
+        sqlcon1()
 
 with tab4:
+    option = st.selectbox("Select any one", ('Users', 'Transaction'))
     visualization()
 ######################################################################################################################################################################
 
