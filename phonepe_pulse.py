@@ -4,22 +4,14 @@ import pandas as pd
 import streamlit as st
 import mysql.connector
 import plotly.express as px
-import geopandas as gpd
 import numpy as np
 
 st.set_page_config(page_title="Phonepe",page_icon="👋",)
-#add_selectbox = st.sidebar.selectbox("Select any one",("Aggregated", "Map", "Top"))
-
-#with st.sidebar:
-  # if add_selectbox == "Top":
-
 st.title("Phonepe Pulse Data Visualization and Exploration")
 st.sidebar.success("Select a page")
 
 path = "C:/GitHub/pulse/data/top/transaction/country/india/state"
-
 dict2 = {'State': [], 'Year': [], 'Quarter': [], 'Districts': [], 'Count': [], 'Amount': []}
-
 tab1, tab2, tab3, tab4, tab5 = st.tabs(["Extract Data", "Transform Data", "Insert Data", "Visualize Data in Map", "Visualize Bar Chart"])
 
 
@@ -84,16 +76,19 @@ def sqlcon1():
     # df = st.dataframe(data)
     df['State'] = df['State'].str.title()
     df['State'] = df['State'].apply(lambda x: x.replace("-", " "))
-    df['State'] = df['State'].apply(lambda x: x.replace("&", "and"))
+    #df['State'] = df['State'].apply(lambda x: x.replace("&", "and"))
+    df['State'].loc[df["State"] == 'Andaman & Nicobar Islands'] = df['State'].loc[
+        df["State"] == 'Andaman & Nicobar Islands'].apply(
+        lambda x: x.replace("Andaman & Nicobar Islands", "Andaman & Nicobar"))
+    df['State'].loc[df["State"] == 'Dadra & Nagar Haveli & Daman & Diu'] = df['State'].loc[
+        df["State"] == 'Dadra & Nagar Haveli & Daman & Diu'].apply(lambda x: x.replace("&", "and"))
     st.write("Data Inserted Successfully")
     conn.commit()
     conn.close()
     return df
 
 
-
 path1 = "C:/GitHub/pulse/data/top/user/country/india/state"
-
 dict1 = {'State': [], 'Year': [], 'Quarter': [], 'Districts': [], 'Users': []}
 
 
@@ -121,6 +116,7 @@ def load_data(path1):
     df = pd.DataFrame(dict1)
     df.to_csv('users_data.csv', index=False)
 
+
 def explore_data():
     df = pd.read_csv('map_user_data.csv')
     df.dropna(inplace=True)
@@ -135,7 +131,6 @@ def explore_data():
 
 
 def sql_con():
-
     pivoted = explore_data()
     conn = mysql.connector.connect(host="database-phonepe-pulse.cbgdu1nd11gm.ap-south-1.rds.amazonaws.com",
                                        user="admin",
@@ -171,12 +166,9 @@ def sql_con():
 
 
 def visualization():
-    df = sql_con()
-    df1 = sqlcon1()
-    st.write("Vi part")
-    st.write(df)
-    if option == 'Users':
+    if option == 'Visualize Users':
         if option1 == '2018':
+            df = sql_con()
             fig = px.choropleth(
                     df,
                     geojson="https://gist.githubusercontent.com/jbrobst/56c13bbbf9d97d187fea01ca62ea5112/raw/e388c4cae20aa53cb5090210a42ebb9b765c0a36/india_states.geojson",
@@ -190,6 +182,7 @@ def visualization():
 
             st.plotly_chart(fig)
         elif option1 == '2019':
+            df = sql_con()
             fig = px.choropleth(
                     df,
                     geojson="https://gist.githubusercontent.com/jbrobst/56c13bbbf9d97d187fea01ca62ea5112/raw/e388c4cae20aa53cb5090210a42ebb9b765c0a36/india_states.geojson",
@@ -203,6 +196,7 @@ def visualization():
 
             st.plotly_chart(fig)
         elif option1 == '2020':
+            df = sql_con()
             fig = px.choropleth(
                     df,
                     geojson="https://gist.githubusercontent.com/jbrobst/56c13bbbf9d97d187fea01ca62ea5112/raw/e388c4cae20aa53cb5090210a42ebb9b765c0a36/india_states.geojson",
@@ -216,6 +210,7 @@ def visualization():
 
             st.plotly_chart(fig)
         elif option1 == '2021':
+            df = sql_con()
             fig = px.choropleth(
                     df,
                     geojson="https://gist.githubusercontent.com/jbrobst/56c13bbbf9d97d187fea01ca62ea5112/raw/e388c4cae20aa53cb5090210a42ebb9b765c0a36/india_states.geojson",
@@ -230,7 +225,9 @@ def visualization():
             st.plotly_chart(fig)
         else:
             st.write("Select any year")
-    elif option == 'Transaction':
+    elif option == 'Visualize Transaction':
+        df1 = sqlcon1()
+        st.write("Average Amount")
         fig = px.choropleth(
                 df1,
                 geojson="https://gist.githubusercontent.com/jbrobst/56c13bbbf9d97d187fea01ca62ea5112/raw/e388c4cae20aa53cb5090210a42ebb9b765c0a36/india_states.geojson",
@@ -240,6 +237,19 @@ def visualization():
                 color='State',
                 color_continuous_scale='Viridis'
             )
+        fig.update_geos(fitbounds="locations")
+
+        st.plotly_chart(fig)
+        st.write("Total Count")
+        fig = px.choropleth(
+            df1,
+            geojson="https://gist.githubusercontent.com/jbrobst/56c13bbbf9d97d187fea01ca62ea5112/raw/e388c4cae20aa53cb5090210a42ebb9b765c0a36/india_states.geojson",
+            featureidkey='properties.ST_NM',
+            locations='State',
+            hover_data=['total_count'],
+            color='State',
+            color_continuous_scale='Viridis'
+        )
         fig.update_geos(fitbounds="locations")
 
         st.plotly_chart(fig)
@@ -261,33 +271,41 @@ def visualization1():
     st.plotly_chart(fig)
 
 
-
 with tab1:
-    st.write("Top Transaction")
-    extract(path)
-    st.write("Top User")
-    load_data(path1)
+    option2 = st.selectbox("Select any one", ('Extract Users', 'Extract Transaction'))
+    if option2 == 'Extract Transaction':
+        st.write("Top Transaction")
+        extract(path)
+    elif option2 == 'Extract Users':
+        st.write("Top User")
+        load_data(path1)
 
 with tab2:
-    st.write("Top Transaction")
-    transform()
-    st.write("Top User")
-    explore_data()
+    option3 = st.selectbox("Select any one", ('Transform Users', 'Transform Transaction'))
+    if option3 == 'Transform Transaction':
+        st.write("Top Transaction")
+        transform()
+    elif option3 == 'Transform Users':
+        st.write("Top User")
+        explore_data()
 
 with tab3:
-    st.write("Top Transaction")
-    sqlcon1()
-    st.write("Top User")
-    sql_con()
-
+    option4 = st.selectbox("Select any one", ('Insert Users', 'Insert Transaction'))
+    if option4 == 'Insert Transaction':
+        st.write("Top Transaction")
+        sqlcon1()
+    elif option4 == 'Insert Users':
+        st.write("Top User")
+        sql_con()
 
 with tab4:
-    option = st.selectbox("Select any one", ('Users', 'Transaction'))
+    option = st.selectbox("Select any one", ('Visualize Users', 'Visualize Transaction'))
     option1 = st.selectbox("Select the year", ('2018', '2019', '2020', '2021'))
     visualization()
 
 with tab5:
     visualization1()
+
 
 #################################################################################################################################################################
 
