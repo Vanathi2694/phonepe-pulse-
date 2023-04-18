@@ -522,13 +522,11 @@ import pandas as pd
 import streamlit as st
 import mysql.connector
 import plotly.express as px
-import geopandas as gpd
 import numpy as np
 
 st.title("Phonepe Pulse Data Visualization and Exploration")
 path = "C:/GitHub/pulse/data/aggregated/transaction/country/india/state"
 dict1 = {'State': [], 'Year': [], 'Quarter': [], 'Type of payment': [], 'Count': [], 'Amount': []}
-
 tab1, tab2, tab3, tab4 = st.tabs(["Extract Data", "Transform Data", "Insert Data", "Visualization"])
 
 def extract(path):
@@ -589,7 +587,6 @@ def extract1(path1):
     df.to_csv('aggregated_user_data.csv', index=False)
 
 
-
 def transform():
     df1 = pd.read_csv('aggregated_transaction_data.csv')
     df1.drop_duplicates(inplace=True)
@@ -603,7 +600,6 @@ def transform():
     #df_grouped.to_csv('aggregatedtoptrans_data.csv', index=False)
     st.write(df_grouped)
     return df_grouped
-
 
 
 def transform1():
@@ -640,12 +636,13 @@ def sqlcon1():
     data = cursor.fetchall()
     df = pd.DataFrame(data, columns=['ID', 'State', 'year', 'type_of_payment', 'total_count', 'amount'])
     # df = st.dataframe(data)
-    df['State'] = df['State'].str.title()
-    df['State'] = df['State'].apply(lambda x: x.replace("-", " "))
+    #df['State'] = df['State'].str.title()
+    #df['State'] = df['State'].apply(lambda x: x.replace("-", " "))
     st.write("Data Inserted Successfully")
     conn.commit()
     conn.close()
     return df
+
 
 @st.cache_data
 def sqlcon():
@@ -671,20 +668,51 @@ def sqlcon():
     return df
 
 
+def visualization():
+    if option == 'Users':
+        df = sqlcon()
+        fig = px.scatter(df, x='year', y='percentage', color='brand', size='total_count',
+                         hover_data=['state'], title='Aggregated Users Data')
+        fig.update_layout(xaxis_title='Year', yaxis_title='Percentage of Users', legend_title='Brand',
+                          hovermode='closest')
+        st.plotly_chart(fig)
+
+    elif option == 'Transaction':
+        df1 = sqlcon1()
+        fig = px.bar(df1, x='year', y='total_count', color='type_of_payment', barmode='stack',
+                     title='Total Count of Payments by Type')
+        st.plotly_chart(fig)
+        fig = px.scatter(df1, x='year', y='amount', color='type_of_payment', title='Total Amount of Payments by Type')
+        st.plotly_chart(fig)
+
 
 with tab1:
-
-    extract(path)
-    extract1(path1)
-
+    option2 = st.selectbox("Select any one", ('Extract Users', 'Extract Transaction'))
+    if option2 == 'Extract Transaction':
+        st.write("Aggregated Transaction")
+        extract(path)
+    elif option2 == 'Extract Users':
+        st.write("Aggregated Users")
+        extract1(path1)
 
 with tab2:
-
-    transform()
-    transform1()
+    option3 = st.selectbox("Select any one", ('Transform Users', 'Transform Transaction'))
+    if option3 == 'Transform Transaction':
+        st.write("Aggregated Transaction")
+        transform()
+    elif option3 == 'Transform Users':
+        st.write("Aggregated User")
+        transform1()
 
 with tab3:
+    option4 = st.selectbox("Select any one", ('Insert Users', 'Insert Transaction'))
+    if option4 == 'Insert Transaction':
+        st.write("Aggregated Transaction")
+        sqlcon1()
+    elif option4 == 'Insert Users':
+        st.write("Aggregated User")
+        sqlcon()
 
-    sqlcon()
-    sqlcon1()
-
+with tab4:
+    option = st.selectbox("Select any one", ('Users', 'Transaction'))
+    visualization()
