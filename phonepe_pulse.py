@@ -787,7 +787,8 @@ CREATE TABLE users (
   year_2018 INT NOT NULL,
   year_2019 INT NOT NULL,
   year_2020 INT NOT NULL,
-  year_2021 INT NOT NULL
+  year_2021 INT NOT NULL,
+  year_2022 INT NOT NULL
 );
 
 CREATE TABLE map_users (
@@ -796,7 +797,8 @@ CREATE TABLE map_users (
   year_2018 INT NOT NULL,
   year_2019 INT NOT NULL,
   year_2020 INT NOT NULL,
-  year_2021 INT NOT NULL
+  year_2021 INT NOT NULL,
+  year_2022 INT NOT NULL
 );
 
 CREATE TABLE aggregated_users (
