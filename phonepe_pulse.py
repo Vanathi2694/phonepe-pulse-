@@ -74,7 +74,7 @@ def sqlcon1():
     cursor = conn.cursor()
     for i, row in df_grouped.iterrows():
         sql = "INSERT INTO top_transaction (state, year, total_count, average_amount) VALUES (%s, %s, %s, %s)"
-            # values = (state, year_2018, year_2019, year_2020, year_2021)
+            # values = (state, year_2018, year_2019, year_2020, year_2021,year_2022)
         cursor.execute(sql, tuple(row))
     query = """
                    SELECT * from top_transaction
@@ -152,15 +152,16 @@ def sql_con():
         year_2019 = int(row['2019-12-31'])
         year_2020 = int(row['2020-12-31'])
         year_2021 = int(row['2021-12-31'])
-        sql = "INSERT INTO users (state, year_2018, year_2019, year_2020, year_2021) VALUES (%s, %s, %s, %s, %s)"
-        values = (state, year_2018, year_2019, year_2020, year_2021)
+        year_2022 = int(row['2022-12-31'])
+        sql = "INSERT INTO users (state, year_2018, year_2019, year_2020, year_2021, year_2022) VALUES (%s, %s, %s, %s, %s, %s)"
+        values = (state, year_2018, year_2019, year_2020, year_2021, year_2022)
         cursor.execute(sql, values)
     query = """
                SELECT * from users
            """
     cursor.execute(query)
     data = cursor.fetchall()
-    df = pd.DataFrame(data, columns=['ID','State', 'year_2018', 'year_2019', 'year_2020', 'year_2021'])
+    df = pd.DataFrame(data, columns=['ID','State', 'year_2018', 'year_2019', 'year_2020', 'year_2021', 'year_2022'])
     df['State'] = df['State'].str.title()
     df['State'] = df['State'].apply(lambda x: x.replace("-", " "))
    # df['State'] = df['State'].apply(lambda x: x.replace("&", "and"))
@@ -232,6 +233,21 @@ def visualization():
             fig.update_geos(fitbounds="locations")
             st.plotly_chart(fig)
             st.balloons()
+        elif option1 == '2022':
+            df = sql_con()
+            fig = px.choropleth(
+                    df,
+                    geojson="https://gist.githubusercontent.com/jbrobst/56c13bbbf9d97d187fea01ca62ea5112/raw/e388c4cae20aa53cb5090210a42ebb9b765c0a36/india_states.geojson",
+                    featureidkey='properties.ST_NM',
+                    locations='State',
+                    hover_data=['year_2022'],
+                    color='State',
+                    color_continuous_scale='Viridis'
+                )
+            fig.update_geos(fitbounds="locations")
+            st.plotly_chart(fig)
+            st.balloons()
+
         else:
             st.write("Select any year")
     elif option == 'Visualize Transaction':
