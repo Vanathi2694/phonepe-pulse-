@@ -290,11 +290,22 @@ def visualization():
 
 def visualization1():
     df = sql_con()
-
-    fig = px.bar(df, x="State", y=["year_2018", "year_2019", "year_2020", "year_2021"],
+    fig = px.bar(df, x="State", y=["year_2018", "year_2019", "year_2020", "year_2021", "year_2022"],
                      barmode='group', title="User Growth by State")
-    fig.update_layout(xaxis_title="State", yaxis_title="Number of Users")
-    st.plotly_chart(fig)
+    fig.update_layout(
+        xaxis={
+            'title': 'State',
+            'title_standoff': 25,
+            'tickmode': 'array',
+            'tickvals': df['State'].tolist(),
+            'ticktext': df['State'].tolist(),
+            'tickangle': -45,
+            'tickfont': {'size': 10}
+        },
+        yaxis={'title': 'Number of Users'}
+    )
+
+    st.plotly_chart(fig, use_container_width=True, config={'scrollZoom': True})
     st.balloons()
 
 
