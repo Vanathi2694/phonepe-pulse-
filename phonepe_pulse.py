@@ -465,15 +465,16 @@ def sql_con():
         year_2019 = int(row['2019-12-31'])
         year_2020 = int(row['2020-12-31'])
         year_2021 = int(row['2021-12-31'])
-        sql = "INSERT INTO map_users (state, year_2018, year_2019, year_2020, year_2021) VALUES (%s, %s, %s, %s, %s)"
-        values = (state, year_2018, year_2019, year_2020, year_2021)
+        year_2022 = int(row['2022-12-31'])
+        sql = "INSERT INTO map_users (state, year_2018, year_2019, year_2020, year_2021,year_2022) VALUES (%s, %s, %s, %s, %s,%s)"
+        values = (state, year_2018, year_2019, year_2020, year_2021, year_2022)
         cursor.execute(sql, values)
     query = """
                SELECT * from map_users
            """
     cursor.execute(query)
     data = cursor.fetchall()
-    df = pd.DataFrame(data, columns=['ID','State', 'year_2018', 'year_2019', 'year_2020', 'year_2021'])
+    df = pd.DataFrame(data, columns=['ID','State', 'year_2018', 'year_2019', 'year_2020', 'year_2021', 'year_2022'])
        # df = st.dataframe(data)
     st.write("Data Inserted Successfully")
     conn.commit()
@@ -491,8 +492,11 @@ def visualization():
         st.balloons()
     elif option =='Transaction':
         df = sqlcon1()
-        grouped = df.groupby(['State', 'year']).sum().reset_index()
+        grouped = df.groupby(['State','year'] ).sum().reset_index()
         fig = px.pie(grouped, values='total_count', names='State', hole=.3)
+        st.plotly_chart(fig)
+        grouped = df.groupby(['State', 'year']).sum().reset_index()
+        fig = px.pie(grouped, values='average_amount', names='State', hole=.3)
         st.plotly_chart(fig)
         st.balloons()
 
