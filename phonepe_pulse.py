@@ -492,12 +492,15 @@ def visualization():
         st.balloons()
     elif option =='Transaction':
         df = sqlcon1()
-        grouped = df.groupby(['State','year'] ).sum().reset_index()
-        fig = px.pie(grouped, values='total_count', names='State', hole=.3)
-        st.plotly_chart(fig)
-        grouped = df.groupby(['State', 'year']).sum().reset_index()
-        fig = px.pie(grouped, values='average_amount', names='State', hole=.3)
-        st.plotly_chart(fig)
+        years = df['year'].unique().tolist()
+        selected_year = st.selectbox('Select a year', years)
+        data = df[df['year'] == selected_year]
+        fig1 = px.pie(data, values='total_count', names='State', hover_data=['total_count'], hole=.2)
+        fig2 = px.pie(data, values='average_amount', names='State', hover_data=['average_amount'], hole=.2)
+        st.write("Total Count")
+        st.plotly_chart(fig1)
+        st.write("Average Amount")
+        st.plotly_chart(fig2)
         st.balloons()
 
 with tab1:
