@@ -326,7 +326,7 @@ with tab3:
 
 with tab4:
     option = st.selectbox("Select any one", ('Visualize Users', 'Visualize Transaction'))
-    option1 = st.selectbox("Select the year", ('2018', '2019', '2020', '2021'))
+    option1 = st.selectbox("Select the year", ('2018', '2019', '2020', '2021', '2022'))
     visualization()
 
 with tab5:
