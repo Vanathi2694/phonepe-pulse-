@@ -177,6 +177,7 @@ def sql_con():
 
 def visualization():
     if option == 'Visualize Users':
+        option1 = st.selectbox("Select the year", ('2018', '2019', '2020', '2021', '2022'))
         if option1 == '2018':
             df = sql_con()
             fig = px.choropleth(
@@ -326,7 +327,6 @@ with tab3:
 
 with tab4:
     option = st.selectbox("Select any one", ('Visualize Users', 'Visualize Transaction'))
-    option1 = st.selectbox("Select the year", ('2018', '2019', '2020', '2021', '2022'))
     visualization()
 
 with tab5:
