@@ -65,6 +65,7 @@ def transform():
     return df_grouped
 
 
+@st.cache_data
 def sqlcon1():
     df_grouped = transform()
     conn = mysql.connector.connect(host="database-phonepe-pulse.cbgdu1nd11gm.ap-south-1.rds.amazonaws.com",
@@ -139,6 +140,7 @@ def explore_data():
     return pivoted
 
 
+@st.cache_data
 def sql_con():
     pivoted = explore_data()
     conn = mysql.connector.connect(host="database-phonepe-pulse.cbgdu1nd11gm.ap-south-1.rds.amazonaws.com",
@@ -452,6 +454,7 @@ def transform1():
     return pivoted
 
 
+@st.cache_data
 def sqlcon1():
     df_grouped = transform()
     conn = mysql.connector.connect(host="database-phonepe-pulse.cbgdu1nd11gm.ap-south-1.rds.amazonaws.com",
@@ -477,7 +480,7 @@ def sqlcon1():
     conn.close()
     return df
 
-
+@st.cache_data
 def sql_con():
 
     pivoted = transform1()
@@ -726,12 +729,22 @@ def visualization():
 
     elif option == 'Transaction':
         df1 = sqlcon1()
-        fig = px.bar(df1, x='year', y='total_count', color='type_of_payment', barmode='stack',
-                     title='Total Count of Payments by Type')
-        st.plotly_chart(fig)
-        fig = px.scatter(df1, x='year', y='amount', color='type_of_payment', title='Total Amount of Payments by Type')
-        st.plotly_chart(fig)
+        years = df1['year'].unique().tolist()
+        selected_year = st.selectbox('Select a year', years)
+        data = df1[df1['year'] == selected_year]
+        payment_types = data['type_of_payment'].unique().tolist()
+        selected_payment_type = st.selectbox('Select a payment type', payment_types)
+        data = data[data['type_of_payment'] == selected_payment_type]
+        fig1 = px.bar(data, x='State', y='total_count', color='State', barmode='stack',
+                      title='Total Count of Payments by Type')
+        fig1.update_layout(height=600, width=800, xaxis_tickangle=-45, xaxis_tickfont=dict(size = 10))
+        fig2 = px.scatter(data, x='State', y='amount', color='State',
+                          title='Total Amount of Payments by Type')
+        fig2.update_layout(height=600, width=800, xaxis_tickangle=-45, xaxis_tickfont=dict(size=10))
+        st.plotly_chart(fig1)
+        st.plotly_chart(fig2)
         st.balloons()
+
 
 
 with tab1:
