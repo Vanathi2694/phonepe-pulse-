@@ -778,68 +778,6 @@ with tab4:
     option = st.selectbox("Select any one", ('Users', 'Transaction'))
     visualization()
 ######################################################################################################################################################################
-use `database-phonepe-pulse`;
-
-create table top_transaction(
-id INT AUTO_INCREMENT PRIMARY KEY,
-state VARCHAR(255) NOT NULL,
-year INT NOT NULL,
-total_count int not null,
-average_amount float not null
-);
-
-create table map_transaction(
-id INT AUTO_INCREMENT PRIMARY KEY,
-state VARCHAR(255) NOT NULL,
-year INT NOT NULL,
-total_count int not null,
-average_amount float not null
-);
-
-create table aggregated_transaction(
-id INT AUTO_INCREMENT PRIMARY KEY,
-state VARCHAR(255) NOT NULL,
-year INT NOT NULL,
-type_of_payment VARCHAR(255) NOT NULL,
-total_count int not null,
-amount float not null
-);
-
-CREATE TABLE users (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  state VARCHAR(255) NOT NULL,
-  year_2018 INT NOT NULL,
-  year_2019 INT NOT NULL,
-  year_2020 INT NOT NULL,
-  year_2021 INT NOT NULL,
-  year_2022 INT NOT NULL
-);
-
-CREATE TABLE map_users (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  state VARCHAR(255) NOT NULL,
-  year_2018 INT NOT NULL,
-  year_2019 INT NOT NULL,
-  year_2020 INT NOT NULL,
-  year_2021 INT NOT NULL,
-  year_2022 INT NOT NULL
-);
-
-CREATE TABLE aggregated_users (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  state VARCHAR(255) NOT NULL,
-  year INT NOT NULL,
-  brand VARCHAR(255) NOT NULL,
-  total_count INT NOT NULL,
-  percentage float NOT NULL
-);
-
-select * from top_transaction;
-select * from users;
-select * from map_transaction;
-select * from map_users;
-select * from aggregated_transaction;
-select * from aggregated_users;
 
 
 
