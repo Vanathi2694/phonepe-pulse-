@@ -128,7 +128,7 @@ def load_data(path1):
 
 
 def explore_data():
-    df = pd.read_csv('map_user_data.csv')
+    df = pd.read_csv('users_data.csv')
     df.dropna(inplace=True)
     df['Year'] = pd.to_datetime(df['Year'], format='%Y')
     grouped = df.groupby(['State', pd.Grouper(key='Year', freq='Y')])['Users'].sum()
