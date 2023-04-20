@@ -1,11 +1,3 @@
-#config.toml
-[theme]
-primaryColor="#F63366"
-backgroundColor="#270042"
-secondaryBackgroundColor="#1F0036"
-textColor="#DADBDD"
-font="sans serif"
-
 #######################################################################################################################################################################
 import os
 import json
