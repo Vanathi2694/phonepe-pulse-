@@ -77,8 +77,9 @@
   accessible to users.
 
   
-  
+  This link for Full Phonepe Pulse:
   [Your Link Here](https://www.linkedin.com/posts/vanathi-soundararajan-04289726b_hi-alldone-my-second-project-of-phonepe-activity-7054412024318996480-2vfC?utm_source=share&utm_medium=member_desktop)
   
+  Some visualization will not be in the up link,so view down link for visualization.
   Down link for Visualization:
   [Your Link Here](https://www.linkedin.com/posts/vanathi-soundararajan-04289726b_i-have-attached-only-the-visualisation-part-activity-7054749665572896768-4QxP?utm_source=share&utm_medium=member_desktop)
